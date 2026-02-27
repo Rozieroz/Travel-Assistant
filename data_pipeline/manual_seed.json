@@ -1,0 +1,32 @@
+[
+  {
+    "id": "amboseli-national-park",
+    "name": "Amboseli National Park",
+    "type": "park",
+    "county": "Kajiado",
+    "region": "Rift Valley",
+    "description": "Famous for large elephant herds and views of Mount Kilimanjaro.",
+    "climate": "Semi-arid; temperatures 20-30°C.",
+    "best_time": "June to October (dry season)",
+    "activities": [
+      {"name": "Game drive", "type": "wildlife", "estimated_cost": "KES 3000"},
+      {"name": "Nature walk", "type": "adventure", "estimated_cost": "KES 1500"}
+    ],
+    "entry_fee": {
+      "citizen": "KES 860",
+      "resident": "KES 860",
+      "non_resident": "KES 6000"
+    },
+    "estimated_daily_cost": {
+      "budget": "KES 5000",
+      "mid": "KES 15000",
+      "luxury": "KES 40000"
+    },
+    "transport_options": [
+      {"type": "road", "estimated_cost": "KES 3000 from Nairobi"},
+      {"type": "air", "estimated_cost": "KES 20000"}
+    ],
+    "nearby_locations": ["Tsavo West", "Chyulu Hills"],
+    "tags": ["elephants", "kilimanjaro", "big five"]
+  }
+]
