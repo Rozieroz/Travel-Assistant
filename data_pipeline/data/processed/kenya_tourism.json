@@ -297,8 +297,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -452,9 +452,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 100000",
-      "resident": "KES 135000",
-      "non_resident": "KES 800000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -531,8 +531,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -598,8 +598,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -632,9 +632,9 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
+      "kids",
       "park",
-      "kids"
+      "game"
     ]
   },
   {
@@ -1308,9 +1308,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 15000000",
-      "resident": "KES 20250000",
-      "non_resident": "KES 90000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -1552,8 +1552,8 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "adventure",
       "city",
+      "adventure",
       "park"
     ]
   },
@@ -1820,8 +1820,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -1920,8 +1920,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "forest",
-      "kids"
+      "kids",
+      "forest"
     ]
   },
   {
@@ -2073,9 +2073,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 15000000",
-      "resident": "KES 20250000",
-      "non_resident": "KES 90000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -2151,9 +2151,9 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "hike",
       "adventure",
-      "park"
+      "park",
+      "hike"
     ]
   },
   {
@@ -2709,8 +2709,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "family",
       "kids",
+      "family",
       "park"
     ]
   },
@@ -3108,8 +3108,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -3208,8 +3208,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -3396,9 +3396,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 5000000",
-      "resident": "KES 6750000",
-      "non_resident": "KES 50000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -3807,8 +3807,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -3841,8 +3841,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4034,8 +4034,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4161,8 +4161,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4321,8 +4321,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4407,8 +4407,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4441,8 +4441,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4626,8 +4626,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4693,8 +4693,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4727,8 +4727,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -4819,8 +4819,8 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "adventure",
       "city",
+      "adventure",
       "kids",
       "park"
     ]
@@ -4923,9 +4923,9 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
+      "kids",
       "park",
-      "kids"
+      "game"
     ]
   },
   {
@@ -4992,8 +4992,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -5026,8 +5026,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -5161,8 +5161,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -5619,8 +5619,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -5813,8 +5813,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -6363,9 +6363,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 500000000",
-      "resident": "KES 675000000",
-      "non_resident": "KES 4000000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -6375,8 +6375,8 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "adventure",
       "bird",
+      "adventure",
       "park"
     ]
   },
@@ -6463,9 +6463,9 @@
       }
     ],
     "entry_fee": {
-      "citizen": "KES 80000",
-      "resident": "KES 110000",
-      "non_resident": "KES 700000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -6609,8 +6609,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "forest",
-      "wildlife"
+      "wildlife",
+      "forest"
     ]
   },
   {
@@ -6710,8 +6710,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "wildlife",
-      "park"
+      "park",
+      "wildlife"
     ]
   },
   {
@@ -6802,8 +6802,8 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "adventure",
       "bird",
+      "adventure",
       "forest"
     ]
   },
@@ -6836,8 +6836,8 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "adventure",
       "bird",
+      "adventure",
       "park"
     ]
   },
@@ -7222,9 +7222,9 @@
     "best_time": "",
     "activities": [],
     "entry_fee": {
-      "citizen": "KES 5000000",
-      "resident": "KES 6750000",
-      "non_resident": "KES 50000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -7558,23 +7558,7 @@
     "description": "",
     "climate": "",
     "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Game parks & Reserves",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Nature & Wildife",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
+    "activities": [],
     "entry_fee": {
       "citizen": "",
       "resident": "",
@@ -7588,9 +7572,7 @@
     "transport_options": [],
     "nearby_locations": [],
     "tags": [
-      "Western Kenya",
-      "Game parks & Reserves",
-      "Nature & Wildife"
+      "park"
     ]
   },
   {
@@ -7630,9 +7612,9 @@
     "best_time": "",
     "activities": [],
     "entry_fee": {
-      "citizen": "KES 500000000",
-      "resident": "KES 675000000",
-      "non_resident": "KES 4000000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -7682,9 +7664,9 @@
     "best_time": "",
     "activities": [],
     "entry_fee": {
-      "citizen": "KES 500000000",
-      "resident": "KES 675000000",
-      "non_resident": "KES 4000000000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -7734,9 +7716,9 @@
     "best_time": "",
     "activities": [],
     "entry_fee": {
-      "citizen": "KES 100000",
-      "resident": "KES 135000",
-      "non_resident": "KES 800000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -7760,9 +7742,9 @@
     "best_time": "",
     "activities": [],
     "entry_fee": {
-      "citizen": "KES 50000",
-      "resident": "KES 67500",
-      "non_resident": "KES 250000"
+      "citizen": "",
+      "resident": "",
+      "non_resident": ""
     },
     "estimated_daily_cost": {
       "budget": "",
@@ -7805,8 +7787,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -7938,8 +7920,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -7972,8 +7954,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8098,8 +8080,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8165,8 +8147,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8423,8 +8405,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8721,8 +8703,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8755,8 +8737,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8822,8 +8804,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -8981,8 +8963,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9140,8 +9122,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9207,8 +9189,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9300,8 +9282,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9367,8 +9349,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9559,8 +9541,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9916,8 +9898,8 @@
     "nearby_locations": [],
     "tags": [
       "adventure",
-      "game",
-      "park"
+      "park",
+      "game"
     ]
   },
   {
@@ -9951,396 +9933,6 @@
     "tags": [
       "adventure",
       "park"
-    ]
-  },
-  {
-    "id": "the-alchemist",
-    "name": "The Alchemist",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Nairobi Circuit",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Festivals and Nightlife",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Nairobi Circuit",
-      "Adventure",
-      "Festivals and Nightlife"
-    ]
-  },
-  {
-    "id": "geco-cafe",
-    "name": "Geco Cafe",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Nairobi Circuit",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Festivals and Nightlife",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Nairobi Circuit",
-      "Adventure",
-      "Festivals and Nightlife"
-    ]
-  },
-  {
-    "id": "kisumu-museum-and-snake-park",
-    "name": "Kisumu Museum and Snake Park",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Arts & Traditional Culture",
-        "type": "cultural",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Western Kenya",
-      "Adventure",
-      "Arts & Traditional Culture"
-    ]
-  },
-  {
-    "id": "kibuye-market",
-    "name": "Kibuye Market",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Arts & Traditional Culture",
-        "type": "cultural",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Western Kenya",
-      "Adventure",
-      "Arts & Traditional Culture"
-    ]
-  },
-  {
-    "id": "boat-racing-on-lake-victoria",
-    "name": "Boat Racing on Lake Victoria",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Watersports",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Western Kenya",
-      "Adventure",
-      "Watersports"
-    ]
-  },
-  {
-    "id": "dunga-hill-camp",
-    "name": "Dunga Hill Camp",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Beaches and Islands",
-        "type": "relaxation",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Western Kenya",
-      "Beaches and Islands"
-    ]
-  },
-  {
-    "id": "lake-victoria-boat-safari",
-    "name": "Lake Victoria Boat Safari",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience Western Kenya",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Nature & Wildife",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Nature trails and hikes",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "Western Kenya",
-      "Nature & Wildife",
-      "Nature trails and hikes"
-    ]
-  },
-  {
-    "id": "mnarani-beach-club",
-    "name": "Mnarani Beach Club",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience North Coast",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Festivals and Nightlife",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "North Coast",
-      "Adventure",
-      "Festivals and Nightlife"
-    ]
-  },
-  {
-    "id": "beneath-the-baobabs",
-    "name": "Beneath the Baobabs",
-    "type": "park",
-    "county": "",
-    "region": null,
-    "description": "",
-    "climate": "",
-    "best_time": "",
-    "activities": [
-      {
-        "name": "Experience North Coast",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Adventure",
-        "type": "adventure",
-        "estimated_cost": ""
-      },
-      {
-        "name": "Experience Festivals and Nightlife",
-        "type": "adventure",
-        "estimated_cost": ""
-      }
-    ],
-    "entry_fee": {
-      "citizen": "",
-      "resident": "",
-      "non_resident": ""
-    },
-    "estimated_daily_cost": {
-      "budget": "",
-      "mid": "",
-      "luxury": ""
-    },
-    "transport_options": [],
-    "nearby_locations": [],
-    "tags": [
-      "North Coast",
-      "Adventure",
-      "Festivals and Nightlife"
     ]
   }
 ]

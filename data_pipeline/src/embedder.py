@@ -108,18 +108,39 @@ def load_and_chunk_all(processed_json_path: str) -> List[Dict]:
 
 def build_vector_store(chunks: List[Dict], persist_dir: str = "data/chroma_db"):
     """
-    Placeholder for vector store creation.
-    In production, this would use Chroma and HuggingFace embeddings.
+    Build Chroma vector store from chunks and persist to disk.
+    Stores each chunk as a document with metadata.
     """
-    chunk_count = len(chunks)
+    import chromadb
     
-    class MockVectorDB:
-        def __init__(self):
-            self._collection_obj = type('Collection', (), {'count': lambda self: chunk_count})()
+    # Create persistent Chroma client
+    client = chromadb.PersistentClient(path=persist_dir)
+    collection = client.get_or_create_collection(
+        name="tourism_locations",
+        metadata={"hnsw:space": "cosine"}
+    )
+    
+    # Add chunks as documents
+    # Chroma needs: ids, documents, metadatas
+    ids = [f"chunk_{i}" for i in range(len(chunks))]
+    documents = [chunk.get("page_content", "") for chunk in chunks]
+    metadatas = [chunk.get("metadata", {}) for chunk in chunks]
+    
+    collection.add(
+        ids=ids,
+        documents=documents,
+        metadatas=metadatas
+    )
+    
+    print(f"Stored {len(chunks)} chunks in Chroma at {persist_dir}")
+    
+    # Return a wrapper object compatible with the mock interface
+    class ChromaVectorDB:
+        def __init__(self, chroma_collection):
+            self._chroma_collection = chroma_collection
         
         @property
         def _collection(self):
-            return self._collection_obj
+            return self._chroma_collection
     
-    print(f"Vector store would store {len(chunks)} chunks in {persist_dir}")
-    return MockVectorDB()
+    return ChromaVectorDB(collection)

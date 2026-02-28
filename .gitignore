@@ -1,0 +1,90 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-specific: Data Pipeline
+# ─────────────────────────────────
+
+# Vector store (regenerated on each pipeline run)
+data_pipeline/data/chroma_db/
+
+# Processed data (generated outputs)
+data_pipeline/data/processed/kenya_tourism.json
+data_pipeline/data/processed/kws_fees.json
+
+# Large raw data files (optional - keep commented if you want to commit these)
+# data_pipeline/data/raw/*.csv
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Node modules (for frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+.tmp/
+temp/
+*.temp
+
+# IDE settings (project-specific)
+.vscode/settings.json
+.idea/workspace.xml
+
+# Documentation (optionally track, but exclude large exports)
+*.pdf
+*.docx
+
+# Test coverage
+.coverage
+htmlcov/
