@@ -1,0 +1,362 @@
+{
+  "nan national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "child/ premium parks adult student national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "amboseli national park": {
+    "citizen": "KES 500",
+    "resident": "KES 700",
+    "non_resident": "KES 6500"
+  },
+  "lake nakuru national park": {
+    "citizen": "KES 500",
+    "resident": "KES 700",
+    "non_resident": "KES 6500"
+  },
+  "urban park national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "nairobi national park": {
+    "citizen": "KES 1000",
+    "resident": "KES 700",
+    "non_resident": "KES 13650"
+  },
+  "wilderness parks national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "tsavo east national park": {
+    "citizen": "KES 3000",
+    "resident": "KES 1500",
+    "non_resident": "KES 27950"
+  },
+  "meru national park": {
+    "citizen": "KES 800",
+    "resident": "KES 500",
+    "non_resident": "KES 9100"
+  },
+  "tsavo west national park": {
+    "citizen": "KES 2200",
+    "resident": "KES 1100",
+    "non_resident": "KES 19500"
+  },
+  "mountain park national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "mount kenya national park": {
+    "citizen": "KES 800",
+    "resident": "KES 400",
+    "non_resident": "KES 9100"
+  },
+  "hell's gate national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "mount longonot national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "hells gate, mt. longonot, mt. elgon, ol donyo sabuk national national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "parks and lake elementaita wildlife sanctuary, shimba hills national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "and kakamega national reserves 500 national park": {
+    "citizen": "KES 500",
+    "resident": "KES 250",
+    "non_resident": "KES 6500"
+  },
+  "mwea national reserve": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "ruma national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "sibiloi national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "ndere island national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "kiunga marine national reserve": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "mwea, ruma, saiwa swamp, south turkana, sibiloi, central national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "island, south island, ndere island, malka mari, chyullu hills, national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "marsabit national parks and tana river primate 500 national park": {
+    "citizen": "KES 500",
+    "resident": "KES 250",
+    "non_resident": "KES 5200"
+  },
+  "sanctuaries national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "nairobi animal orphanage, nairobi safari walk and kisumu national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "impala sanctuary 300 national park": {
+    "citizen": "KES 300",
+    "resident": "KES 200",
+    "non_resident": "KES 3250"
+  },
+  "nairobi sanctuary package (nairobi animal orphanage and national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "nairobi safari walk)500 national park": {
+    "citizen": "KES 500",
+    "resident": "KES 300",
+    "non_resident": "KES 5200"
+  },
+  "watamu marine national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "kisite mpunguti marine national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "malindi marine national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "mombasa marine national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "kisite mpunguti, watamu, mombasa, malindi, kiunga and national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "diani chale 500 national park": {
+    "citizen": "KES 500",
+    "resident": "KES 250",
+    "non_resident": "KES 3250"
+  },
+  "nairobi safari walk) 500 national park": {
+    "citizen": "KES 500",
+    "resident": "KES 300",
+    "non_resident": "KES 5200"
+  },
+  "camping national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "east african citizen national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  " national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "special campsites adult student child/ national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "national parks) national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "all other parks 250 200 national park": {
+    "citizen": "KES 250",
+    "resident": "KES 350",
+    "non_resident": "KES 4550"
+  },
+  "reservation fees for special campsite per week in national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "ksh. national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "public campsites national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "premium parks (amboseli and 250 200 national park": {
+    "citizen": "KES 250",
+    "resident": "KES 350",
+    "non_resident": "KES 3900"
+  },
+  "lake nakuru national parks) national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "all other parks 200 150 national park": {
+    "citizen": "KES 200",
+    "resident": "KES 300",
+    "non_resident": "KES 2600"
+  },
+  "water sports national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "15,000activities amount of fees national park": {
+    "citizen": "KES 15000",
+    "resident": "",
+    "non_resident": ""
+  },
+  "annual licensing fee inclusive of crew and guests 240,000 for large business enterprises with valid certificate of incorporation/registration and licensed by national park": {
+    "citizen": "KES 240000",
+    "resident": "",
+    "non_resident": ""
+  },
+  "the tourism regulatory authority; national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "120,000 for micro & small business enterprises with a valid certificate of incorporation/registration, national park": {
+    "citizen": "KES 120000",
+    "resident": "",
+    "non_resident": ""
+  },
+  "registered under the micro and small enterprise act, cap. 499c and licensed by the tourism regulatory 145,000authority; national park": {
+    "citizen": "KES 499",
+    "resident": "",
+    "non_resident": ""
+  },
+  "independent watersport participants, 500 daily national park": {
+    "citizen": "KES 500",
+    "resident": "",
+    "non_resident": ""
+  },
+  "both citizen and non-residents national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "2,500 weekly national park": {
+    "citizen": "KES 2500",
+    "resident": "",
+    "non_resident": ""
+  },
+  "5,000 monthly national park": {
+    "citizen": "KES 5000",
+    "resident": "",
+    "non_resident": ""
+  },
+  "10,000 annually national park": {
+    "citizen": "KES 10000",
+    "resident": "",
+    "non_resident": ""
+  },
+  "tourism activities and experiences national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "animal tracking in selected parks on prior arrangement exclusive of park fee national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": "KES 260"
+  },
+  "warden\u2019s lecture national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": "KES 390"
+  },
+  "event sites premium and urban parks exclusive of conservation fees and security charges national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "10-30 pax national park": {
+    "citizen": "KES 10",
+    "resident": "",
+    "non_resident": "KES 2600"
+  },
+  "31-50 pax national park": {
+    "citizen": "KES 31",
+    "resident": "",
+    "non_resident": "KES 3900"
+  },
+  "51-100 pax national park": {
+    "citizen": "KES 51",
+    "resident": "",
+    "non_resident": "KES 10400"
+  },
+  "all other parks national park": {
+    "citizen": "KES 100",
+    "resident": "",
+    "non_resident": "KES 2600"
+  },
+  "nb: the above charges are exclusive of conservation fees national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "photo sessions per group exclusive of conservation fees national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": "KES 2600"
+  },
+  "filming or photography fees per week exclusive of conservation fees national park": {
+    "citizen": "",
+    "resident": "",
+    "non_resident": ""
+  },
+  "1-5 crew members national park": {
+    "citizen": "KES 1",
+    "resident": "",
+    "non_resident": "KES 2080"
+  }
+}
