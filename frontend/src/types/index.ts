@@ -123,7 +123,6 @@ export interface EstimateRequest {
   location: string;
   days: number;
   budget_level: 'budget' | 'mid' | 'luxury';
-  travelers?: number;
 }
 
 // Response payload containing calculated budget estimate with detailed breakdown
