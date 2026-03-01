@@ -1,0 +1,4 @@
+# ensures the directory structure is preserved
+touch backend/data_pipeline/data/chroma_db/.gitkeep
+
+touch backend/data_pipeline/data/processed/.gitkeep

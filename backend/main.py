@@ -62,7 +62,7 @@ MODEL_NAME = "llama-3.3-70b-versatile"
 
 # Embedding model and Chroma
 embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-chroma_client = chromadb.PersistentClient(path="../data_pipeline/data/chroma_db")
+chroma_client = chromadb.PersistentClient(path="/data_pipeline/data/chroma_db")
 collection = chroma_client.get_collection("tourism_locations")
 
 # Location data for budget
