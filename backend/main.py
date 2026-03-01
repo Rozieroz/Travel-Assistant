@@ -1,138 +1,293 @@
-import json
+"""
+main.py – FastAPI backend for Kenya Travel Assistant.
+
+Endpoints:
+- POST /chat       – Send a message and get a reply (session‑based)
+- GET  /weather    – Get current weather for a location
+- POST /estimate   – Get a budget estimate for a trip
+"""
+
 import os
-from src.scrapers import google_maps, kws_parser, magical_kenya_parser
-from src import cleaner, embedder, retriever
+import json
+import re
+import requests
+from pathlib import Path
+from typing import Dict, List, Optional
 
-def parse_all_sources():
-    """Parse all raw CSV files and return list of raw location dicts."""
-    all_raw = []
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
 
-    # Google Maps amusement parks
-    if os.path.exists("data/raw/google_maps_amusement.csv"):
-        all_raw.extend(google_maps.parse_google_maps_csv("data/raw/google_maps_amusement.csv"))
+import chromadb
+from sentence_transformers import SentenceTransformer
+from openai import OpenAI
 
-    # Google Maps national parks/reserves
-    if os.path.exists("data/raw/reserves_kenya.csv"):
-        all_raw.extend(google_maps.parse_google_maps_csv("data/raw/reserves_kenya.csv"))
+# -------------------- Load environment --------------------
+# .env is in the project root (one level up from backend/)
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
-    # KWS parks
-    if os.path.exists("data/raw/kws.csv"):
-        all_raw.extend(kws_parser.parse_kws_csv("data/raw/kws.csv"))
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+OPEN_WEATHER_API_KEY = os.environ.get("OPEN_WEATHER_API_KEY")
 
-    # Magical Kenya parks
-    if os.path.exists("data/raw/magicalkenya_places.csv"):
-        all_raw.extend(magical_kenya_parser.parse_magical_kenya_csv("data/raw/magicalkenya_places.csv"))
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY not set in .env")
 
+# -------------------- Global initialisation --------------------
+# These are loaded once when the server starts and reused.
 
-    # Magical Kenya destinations (cities, beaches, mountains)
-    if os.path.exists("data/raw/magicalkenya.csv"):
-        all_raw.extend(magical_kenya_parser.parse_magical_kenya_csv("data/raw/magicalkenya.csv"))
+# Groq client
+client = OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=GROQ_API_KEY,
 
-    # fun indoor
-    if os.path.exists("data/raw/indoor.csv"):
-        all_raw.extend(magical_kenya_parser.parse_magical_kenya_csv("data/raw/indoor.csv"))
+    # Set a realistic User-Agent to avoid potential blocking by the API
+    default_headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+)
+MODEL_NAME = "llama-3.3-70b-versatile"  # or your preferred model
 
+# Embedding model and Chroma
+embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+chroma_client = chromadb.PersistentClient(path="../data_pipeline/data/chroma_db")
+collection = chroma_client.get_collection("tourism_locations")
 
-    return all_raw
+# Location data for budget
+with open("../data_pipeline/data/processed/kenya_tourism.json", "r") as f:
+    locations_data = json.load(f)
+location_lookup = {loc["name"].lower(): loc for loc in locations_data}
 
-def enrich_with_manual_data(raw_locations):
-    """
-    Load manual seed and merge with parsed data.
-    Manual seed should contain full records for key locations.
-    For locations not in manual seed, we keep parsed data with missing fields.
-    """
-    manual_path = "data/manual_seed.json"
-    if os.path.exists(manual_path):
-        with open(manual_path, 'r') as f:
-            manual = json.load(f)
-        # Merge: if name matches, update parsed with manual fields
-        manual_dict = {loc['name'].lower(): loc for loc in manual}
-        for loc in raw_locations:
-            key = loc['name'].lower()
-            if key in manual_dict:
-                loc.update(manual_dict[key])
-    return raw_locations
+# In‑memory session store (for demo; use Redis in production)
+sessions: Dict[str, List[Dict[str, str]]] = {}
 
-def convert_to_schema(raw_locations):
-    """
-    Convert raw dicts to the unified schema (with placeholders).
-    This is a best-effort mapping.
-    """
-    unified = []
-    for raw in raw_locations:
-        # Start with empty template
-        loc = {
-            "id": raw.get('name', '').lower().replace(' ', '-'),
-            "name": raw.get('name', ''),
-            "type": raw.get('type', 'park'),
-            "county": raw.get('county', ''),
-            "region": raw.get('region', ''),
-            "description": raw.get('description', raw.get('description', '')),
-            "climate": raw.get('climate', ''),
-            "best_time": raw.get('best_time', ''),
-            "activities": [],  # need to parse from review snippets or categories
-            "entry_fee": {
-                "citizen": raw.get('entry_fee_citizen', ''),
-                "resident": raw.get('entry_fee_resident', ''),
-                "non_resident": raw.get('entry_fee_non_resident', '')
-            },
-            "estimated_daily_cost": {
-                "budget": raw.get('daily_budget', ''),
-                "mid": raw.get('daily_mid', ''),
-                "luxury": raw.get('daily_luxury', '')
-            },
-            "transport_options": [],
-            "nearby_locations": [],
-            "tags": []
-        }
+# -------------------- Pydantic models --------------------
+class ChatRequest(BaseModel):
+    session_id: str
+    message: str
 
-        # If we have review snippets, try to create an activity list
-        if raw.get('description'):
-            # This is simplistic; you might want to use NLP to extract activities
-            loc['activities'] = [{"name": raw['description'][:50], "type": "adventure", "estimated_cost": ""}]
+class ChatResponse(BaseModel):
+    session_id: str
+    reply: str
 
-        # If we have categories from Magical Kenya, use as tags
-        if raw.get('categories'):
-            loc['tags'] = raw['categories']
+class WeatherRequest(BaseModel):
+    location: str
+    days: Optional[int] = 0
 
-        unified.append(loc)
-    return unified
+class WeatherResponse(BaseModel):
+    location: str
+    weather: str
 
-def run_pipeline():
-    print("=== DAY 1: Building Knowledge Base ===")
+class EstimateRequest(BaseModel):
+    location: str
+    days: int
+    budget_level: str = "mid"  # budget, mid, luxury
 
-    # 1. Parse all raw sources
-    raw_locations = parse_all_sources()
-    print(f"Parsed {len(raw_locations)} raw records.")
+class EstimateResponse(BaseModel):
+    location: str
+    days: int
+    budget_level: str
+    estimate: str
 
-    # 2. Enrich with manual data
-    raw_locations = enrich_with_manual_data(raw_locations)
+# -------------------- Helper functions --------------------
+def retrieve_context(query: str, k: int = 5) -> str:
+    """Retrieve top k relevant chunks from Chroma."""
+    query_emb = embedder.encode(query).tolist()
+    results = collection.query(query_embeddings=[query_emb], n_results=k)
+    docs = results['documents'][0] if results['documents'] else []
+    return "\n\n".join(docs)
 
-    # 3. Convert to unified schema
-    unified = convert_to_schema(raw_locations)
+def call_groq(prompt: str) -> str:
+    """Call the chosen model via Groq."""
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": "You are a helpful travel assistant for Kenya."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=512,
+            top_p=0.9
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error calling Groq API: {str(e)}"
 
-    # 4. Clean and normalize
-    unified = cleaner.merge_sources([unified])  # merge duplicates within same list
-    unified = cleaner.deduplicate(unified)
-    for loc in unified:
-        loc = cleaner.normalize_fees(loc)
-        loc['tags'] = cleaner.generate_tags(loc)
+def get_weather(location: str, days_ahead: int = 0) -> str:
+    """Fetch current weather (or forecast) for a location."""
+    if not OPEN_WEATHER_API_KEY:
+        return "Weather service not configured."
 
-    # 5. Save unified JSON
-    os.makedirs("data/processed", exist_ok=True)
-    with open("data/processed/kenya_tourism.json", "w") as f:
-        json.dump(unified, f, indent=2)
-    print(f"Saved {len(unified)} locations to data/processed/kenya_tourism.json")
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/forecast?q={location},KE&appid={OPEN_WEATHER_API_KEY}&units=metric"
+        resp = requests.get(url)
+        data = resp.json()
+        if resp.status_code != 200:
+            return f"Weather unavailable: {data.get('message', 'unknown error')}"
 
-    # 6. Chunk and embed
-    print("Creating chunks and building vector store...")
-    chunks = embedder.load_and_chunk_all("data/processed/kenya_tourism.json")
-    vectordb = embedder.build_vector_store(chunks, persist_dir="data/chroma_db")
-    print(f"Vector store created with {vectordb._collection.count()} vectors.")
+        forecast = data['list'][0]
+        temp = forecast['main']['temp']
+        desc = forecast['weather'][0]['description']
+        wind = forecast['wind']['speed']
+        return f"Current weather in {location}: {temp}°C, {desc}, wind {wind} m/s."
+    except Exception as e:
+        return f"Error fetching weather: {str(e)}"
 
-    # 7. Test retrieval
-    print("\nTesting retrieval with sample query:")
-    retriever.test_retriever("Where can I take kids for fun activities?")
+def estimate_budget(location_name: str, days: int, budget_level: str) -> Optional[str]:
+    """Calculate budget breakdown (same as in rag_chat.py)."""
+    loc = location_lookup.get(location_name.lower())
+    if not loc:
+        return None
 
+    # Get daily cost
+    daily_cost_str = loc.get("estimated_daily_cost", {}).get(budget_level, "")
+    match = re.search(r'(\d+(?:,\d+)?)', daily_cost_str)
+    if not match:
+        return f"Daily cost information not available for {location_name}."
+    daily_cost = float(match.group(1).replace(',', ''))
+    accommodation = daily_cost * days
+
+    # Park entry fees
+    entry_fee = loc.get("entry_fee", {})
+    citizen_fee_str = entry_fee.get("citizen", "")
+    entry_cost = 0
+    if citizen_fee_str:
+        match = re.search(r'(\d+(?:,\d+)?)', citizen_fee_str)
+        if match:
+            entry_cost = float(match.group(1).replace(',', ''))
+
+    # Transport (first option, round trip)
+    transport_options = loc.get("transport_options", [])
+    transport_cost = 0
+    if transport_options and len(transport_options) > 0:
+        first = transport_options[0]
+        if isinstance(first, dict):
+            cost_str = first.get("estimated_cost", "")
+            match = re.search(r'(\d+(?:,\d+)?)', cost_str)
+            if match:
+                transport_cost = float(match.group(1).replace(',', ''))
+    transport_cost *= 2
+
+    # Activities
+    activities_cost = 0
+    for act in loc.get("activities", []):
+        if isinstance(act, dict):
+            cost_str = act.get("estimated_cost", "")
+            match = re.search(r'(\d+(?:,\d+)?)', cost_str)
+            if match:
+                activities_cost += float(match.group(1).replace(',', ''))
+
+    total = accommodation + entry_cost + transport_cost + activities_cost
+    total_fmt = f"KES {total:,.0f}"
+    breakdown = (
+        f"Breakdown for {days} days at {budget_level} level:\n"
+        f"- Accommodation & meals: KES {accommodation:,.0f}\n"
+        f"- Park entry fees: KES {entry_cost:,.0f}\n"
+        f"- Transport (round trip): KES {transport_cost:,.0f}\n"
+        f"- Activities: KES {activities_cost:,.0f}\n"
+        f"**Estimated total: {total_fmt}**"
+    )
+    return breakdown
+
+def extract_weather_intent(user_input: str) -> tuple:
+    """Simple heuristic to detect weather requests and guess location."""
+    lower = user_input.lower()
+    if 'weather' in lower or 'forecast' in lower or 'temperature' in lower:
+        words = user_input.split()
+        if words:
+            return words[-1].strip('?.,!'), 0
+    return None, None
+
+# -------------------- FastAPI app --------------------
+app = FastAPI(title="Kenya Travel Assistant API")
+
+# Allow CORS for frontend (adjust origins in production)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    return {"message": "Kenya Travel Assistant API is running."}
+
+@app.post("/chat", response_model=ChatResponse)
+def chat_endpoint(request: ChatRequest):
+    """Process a chat message with session memory."""
+    session_id = request.session_id
+    user_message = request.message
+
+    # Retrieve or create session history
+    if session_id not in sessions:
+        sessions[session_id] = []
+    history = sessions[session_id]
+
+    # ---- Weather intent (optional, can be handled by RAG as well) ----
+    weather_info = ""
+    loc_weather, _ = extract_weather_intent(user_message)
+    if loc_weather:
+        weather_info = get_weather(loc_weather)
+        if weather_info:
+            weather_info = f"Weather update: {weather_info}"
+
+    # ---- Retrieve context ----
+    context = retrieve_context(user_message)
+
+    # ---- Format history ----
+    history_str = "\n".join(
+        f"User: {turn['user']}\nAssistant: {turn['assistant']}"
+        for turn in history
+    )
+
+    # ---- Build prompt ----
+    prompt = f"""You are a friendly Kenyan travel assistant. Provide practical travel advice.
+Mention budget options when relevant. Consider weather if mentioned. Suggest transport options.
+Be concise and helpful.
+
+Relevant context from our knowledge base:
+{context}
+
+{weather_info}
+
+Chat history:
+{history_str}
+
+User: {user_message}
+Assistant:"""
+
+    # ---- Get response ----
+    reply = call_groq(prompt)
+
+    # ---- Save to history ----
+    history.append({"user": user_message, "assistant": reply})
+
+    return ChatResponse(session_id=session_id, reply=reply)
+
+@app.get("/weather", response_model=WeatherResponse)
+def weather_endpoint(location: str, days: int = 0):
+    """Get current weather for a location."""
+    weather = get_weather(location, days)
+    return WeatherResponse(location=location, weather=weather)
+
+@app.post("/estimate", response_model=EstimateResponse)
+def estimate_endpoint(request: EstimateRequest):
+    """Get a budget estimate for a trip."""
+    estimate = estimate_budget(request.location, request.days, request.budget_level)
+    if estimate is None:
+        raise HTTPException(status_code=404, detail=f"Location '{request.location}' not found in knowledge base.")
+    return EstimateResponse(
+        location=request.location,
+        days=request.days,
+        budget_level=request.budget_level,
+        estimate=estimate
+    )
+
+# Optional: run with uvicorn if executed directly
 if __name__ == "__main__":
-    run_pipeline()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -88,3 +88,11 @@ temp/
 # Test coverage
 .coverage
 htmlcov/
+
+
+# .md
+DOCUMENTATION_MAP.md
+PROJECT_DOCUMENTATION.md
+QUICK_START.md
+README_UPDATED.md
+TECHNICAL_REFERENCE.md
