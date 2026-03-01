@@ -7,6 +7,7 @@ Endpoints:
 - POST /estimate   – Get a budget estimate for a trip
 """
 
+import datetime
 import os
 import json
 import re
@@ -34,6 +35,16 @@ OPEN_WEATHER_API_KEY = os.environ.get("OPEN_WEATHER_API_KEY")
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set in .env")
 
+# Currency conversion (for budget estimates)
+USD_TO_KES = 130  # Update this exchange rate periodically
+
+def format_currency(kes_amount: float) -> str:
+    """Format amount in both KES and USD"""
+    kes_formatted = f"KES {kes_amount:,.0f}"
+    usd_amount = kes_amount / USD_TO_KES
+    usd_formatted = f"USD ${usd_amount:,.0f}"
+    return f"{kes_formatted} (≈ {usd_formatted})"
+
 # -------------------- Global initialisation --------------------
 # These are loaded once when the server starts and reused.
 
@@ -47,7 +58,7 @@ client = OpenAI(
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
 )
-MODEL_NAME = "llama-3.3-70b-versatile"  # or your preferred model
+MODEL_NAME = "llama-3.3-70b-versatile"  
 
 # Embedding model and Chroma
 embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
@@ -66,6 +77,7 @@ sessions: Dict[str, List[Dict[str, str]]] = {}
 class ChatRequest(BaseModel):
     session_id: str
     message: str
+    currency: Optional[str] = "KES"  # Make it optional with default
 
 class ChatResponse(BaseModel):
     session_id: str
@@ -135,13 +147,16 @@ def get_weather(location: str, days_ahead: int = 0) -> str:
     except Exception as e:
         return f"Error fetching weather: {str(e)}"
 
-def estimate_budget(location_name: str, days: int, budget_level: str) -> Optional[str]:
-    """Calculate budget breakdown (same as in rag_chat.py)."""
+def estimate_budget(location_name: str, days: int, budget_level: str = "mid", show_usd: bool = True) -> Optional[str]:
+    """
+    Calculate estimated total cost for a trip.
+    Shows both KES and USD if show_usd is True.
+    """
     loc = location_lookup.get(location_name.lower())
     if not loc:
         return None
 
-    # Get daily cost
+    # Get daily cost for the requested level
     daily_cost_str = loc.get("estimated_daily_cost", {}).get(budget_level, "")
     match = re.search(r'(\d+(?:,\d+)?)', daily_cost_str)
     if not match:
@@ -158,7 +173,7 @@ def estimate_budget(location_name: str, days: int, budget_level: str) -> Optiona
         if match:
             entry_cost = float(match.group(1).replace(',', ''))
 
-    # Transport (first option, round trip)
+    # Transport
     transport_options = loc.get("transport_options", [])
     transport_cost = 0
     if transport_options and len(transport_options) > 0:
@@ -180,14 +195,18 @@ def estimate_budget(location_name: str, days: int, budget_level: str) -> Optiona
                 activities_cost += float(match.group(1).replace(',', ''))
 
     total = accommodation + entry_cost + transport_cost + activities_cost
-    total_fmt = f"KES {total:,.0f}"
+
+    # Format with both currencies
+    kes_total = f"KES {total:,.0f}"
+    usd_total = f"USD ${total/USD_TO_KES:,.0f}"
+    
     breakdown = (
         f"Breakdown for {days} days at {budget_level} level:\n"
-        f"- Accommodation & meals: KES {accommodation:,.0f}\n"
-        f"- Park entry fees: KES {entry_cost:,.0f}\n"
-        f"- Transport (round trip): KES {transport_cost:,.0f}\n"
-        f"- Activities: KES {activities_cost:,.0f}\n"
-        f"**Estimated total: {total_fmt}**"
+        f"- Accommodation & meals: {format_currency(accommodation)}\n"
+        f"- Park entry fees: {format_currency(entry_cost)}\n"
+        f"- Transport (round trip): {format_currency(transport_cost)}\n"
+        f"- Activities: {format_currency(activities_cost)}\n"
+        f"**Estimated total: {kes_total} (≈ {usd_total})**"
     )
     return breakdown
 
@@ -216,11 +235,31 @@ app.add_middleware(
 def root():
     return {"message": "Kenya Travel Assistant API is running."}
 
+# backend/main.py - Add this endpoint
+@app.get("/healthz")
+async def health_check():
+    return {
+        "status": "ok",
+        "timestamp": datetime.datetime.now().isoformat(),
+        "service": "Safari Scouts API"
+    }
+
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest):
     """Process a chat message with session memory."""
     session_id = request.session_id
     user_message = request.message
+    # Use attribute access, not .get() - this is the key fix!
+    currency = request.currency  # Changed from request.get("currency", "KES")
+
+    # Currency hint based on user preference
+    currency_hint = ""
+    if currency == "USD":
+        currency_hint = "Show all prices in USD. Use approximate conversion (1 USD ≈ 130 KES)."
+    elif currency == "BOTH":
+        currency_hint = "Show prices in both KES and USD with approximate conversion (1 USD ≈ 130 KES)."
+    else:  # KES default
+        currency_hint = "Show prices in Kenyan Shillings (KES)."
 
     # Retrieve or create session history
     if session_id not in sessions:
@@ -246,7 +285,17 @@ def chat_endpoint(request: ChatRequest):
 
     # ---- Build prompt ----
     prompt = f"""You are a friendly Kenyan travel assistant. Provide practical travel advice.
-Mention budget options when relevant. Consider weather if mentioned. Suggest transport options.
+Mention budget options when relevant. {currency_hint} 
+Consider weather if mentioned and give recommendations on clothing and gear based on weather predictions.
+
+Ask follow‑up questions if you need more info to give a good answer. For budget questions, ask about preferred accommodation type (budget, mid-range, luxury) and activities.
+
+Ask the user if their location is Nairobi CBD or if they need to get to CBD first, unless they specify they will use a cab.
+Suggest transport options and specify from where the journey starts and where to alight. 
+If the user is in Nairobi CBD or if they need to get to CBD first unless when using a cab.
+If you don't know from where they need to board a matatu, don't mention it.
+
+Remember sometimes Tourists may not about boarding matatus or locals may not be willing to board matatus.
 Be concise and helpful.
 
 Relevant context from our knowledge base:
@@ -276,15 +325,16 @@ def weather_endpoint(location: str, days: int = 0):
 
 @app.post("/estimate", response_model=EstimateResponse)
 def estimate_endpoint(request: EstimateRequest):
-    """Get a budget estimate for a trip."""
+    # Get the estimate with both currencies
     estimate = estimate_budget(request.location, request.days, request.budget_level)
     if estimate is None:
         raise HTTPException(status_code=404, detail=f"Location '{request.location}' not found in knowledge base.")
+    
     return EstimateResponse(
         location=request.location,
         days=request.days,
         budget_level=request.budget_level,
-        estimate=estimate
+        estimate=estimate  # Already includes both currencies
     )
 
 # Optional: run with uvicorn if executed directly
