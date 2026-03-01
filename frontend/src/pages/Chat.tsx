@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useChat } from '../hooks/useChat';
+// import { useChat } from '../hooks/useChat';
 import MessageList from '../components/chat/MessageList';
 import MessageInput from '../components/chat/MessageInput';
 import ModeToggle from '../components/ui/ModeToggle';
 import QuickSuggestions from '../components/ui/QuickSuggestions';
 import SidePanel from '../components/chat/SidePanel';
+import { useChat } from '../contexts/ChatContext';  
+
+import CurrencyToggle from '../components/ui/CurrencyToggle';
+
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -93,6 +97,7 @@ export default function Chat() {
 
         {/* Center: mode toggle */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <CurrencyToggle />
           <ModeToggle mode={mode} onChange={setMode} compact />
         </div>
 

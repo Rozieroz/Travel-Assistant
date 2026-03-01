@@ -47,7 +47,7 @@ data_pipeline/data/chroma_db/
 data_pipeline/data/processed/kenya_tourism.json
 data_pipeline/data/processed/kws_fees.json
 
-# Large raw data files (optional - keep commented if you want to commit these)
+# Large raw data files
 # data_pipeline/data/raw/*.csv
 
 # Environment
@@ -106,3 +106,22 @@ frontend/.env
 frontend/.gitignore
 
 .gitignore
+
+*.pyc
+.env
+venv/
+env/
+*.db
+
+# Node
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+EOF
+
+# Ignore large data files but keep structure
+backend/data_pipeline/data/chroma_db/*
+!backend/data_pipeline/data/chroma_db/.gitkeep
+!backend/data_pipeline/data/processed/.gitkeep

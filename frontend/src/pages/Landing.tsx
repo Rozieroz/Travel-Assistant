@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useChat } from '../hooks/useChat';
+import { useChat } from '../contexts/ChatContext';
 import type { Mode } from '../types';
 import QuickSuggestions from '../components/ui/QuickSuggestions';
 
@@ -27,18 +27,43 @@ const MODES: { key: Mode; icon: string; title: string; tagline: string; desc: st
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { setMode, sendMessage } = useChat();
+  const chat = useChat(); // Get the whole context object
   const [hovered, setHovered] = useState<Mode | null>(null);
 
   const handleCardClick = (m: Mode) => {
-    setMode(m);
-    navigate('/chat');
+    try {
+      console.log('Card clicked:', m);
+      console.log('Chat context:', chat);
+      
+      if (chat.setMode) {
+        chat.setMode(m);
+        console.log('Mode set successfully');
+      } else {
+        console.error('setMode is not available in chat context');
+      }
+      
+      navigate('/chat');
+    } catch (error) {
+      console.error('Error in handleCardClick:', error);
+    }
   };
 
   const handleChipClick = (prompt: string, m: Mode) => {
-    setMode(m);
-    sendMessage(prompt);
-    navigate('/chat');
+    try {
+      console.log('Chip clicked:', prompt, m);
+      
+      if (chat.setMode) {
+        chat.setMode(m);
+      }
+      
+      if (chat.sendMessage) {
+        chat.sendMessage(prompt);
+      }
+      
+      navigate('/chat');
+    } catch (error) {
+      console.error('Error in handleChipClick:', error);
+    }
   };
 
   return (

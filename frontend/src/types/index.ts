@@ -1,6 +1,7 @@
 // defines shared TypeScript types used across the frontend application, ensuring type safety and consistency in data structures.
 
 export type Mode = 'adventure' | 'everyday';
+export type Currency = 'KES' | 'USD' | 'BOTH';
 
 export interface Message {
   id: string;
@@ -14,6 +15,14 @@ export interface ChatState {
   mode: Mode;
   sessionId: string;
   isTyping: boolean;
+  currency: Currency;
+
+}
+
+export interface ChatContextValue extends ChatState {
+  sendMessage: (content: string) => Promise<void>;
+  setMode: (mode: Mode) => void;
+  clearChat: () => void;
 }
 
 export interface WeatherData {
@@ -68,3 +77,4 @@ export interface WeatherInfo {
   weather: string;
   timestamp?: string;
 }
+

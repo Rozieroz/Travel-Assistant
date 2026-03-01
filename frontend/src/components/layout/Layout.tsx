@@ -1,7 +1,8 @@
 // Layout.tsx ---  defines the main layout component for the application, which sets a full-screen background image with a gradient overlay to enhance readability. It accepts child components to render within this layout and allows for different overlay intensity options (light, medium, dark) to customize the visual appearance. The component is styled using inline styles and ensures that the content is displayed above the background and overlay layers.
 import React from 'react';
 
-const BG_IMAGE = 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1920&q=85';
+const BG_IMAGE = 'savannah.jpeg';
+
 
 interface LayoutProps {
   children: React.ReactNode;
