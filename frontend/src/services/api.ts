@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios';
-import type { ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, WeatherResponse, WeatherRequest, WeatherInfo } from '../types';
+import type {  ChatResponse, EstimateResponse, WeatherResponse } from '../types';
 
 
 
