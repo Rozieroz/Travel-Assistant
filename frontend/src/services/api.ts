@@ -7,53 +7,105 @@
  */
 
 import axios from 'axios';
-import { ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, WeatherInfo } from '../types';
+import type { ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, WeatherResponse, WeatherRequest, WeatherInfo } from '../types';
 
-// Retrieve API base URL from environment configuration or default to local development server
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-// Initialize axios instance with base configuration
-// Applies consistent headers and base URL to all requests
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+
+// Base URL for the backend API, configurable via environment variable
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+
+// Create an axios instance with default configuration
+const api = axios.create({
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  // Add timeout and other defaults
+  timeout: 30000,
 });
 
-// Send a chat message to the LLM backend endpoint
-// Accepts user query or follow-up messages and returns assistant response with optional trip data
-export const sendChatMessage = async (data: ChatRequest): Promise<ChatResponse> => {
-  const response = await apiClient.post('/chat', data);
-  return response.data;
+// Request interceptor for logging (optional)
+api.interceptors.request.use(
+  (config) => {
+    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+// API methods
+// Each method corresponds to a backend endpoint and returns typed data for use in the frontend application.
+
+
+
+export const chatApi = {
+  /**
+   * Send a message to the chat assistant and get a reply
+   * @param sessionId - Unique session identifier
+   * @param message - User's message
+   * @returns Promise with assistant's reply
+   */
+  sendMessage: async (sessionId: string, message: string): Promise<ChatResponse> => {
+    const response = await api.post<ChatResponse>('/chat', {
+      session_id: sessionId,
+      message,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get weather information for a location
+   * @param location - City or place name
+   * @param days - Number of days ahead (0 for current)
+   * @returns Weather information
+   */
+  getWeather: async (location: string, days: number = 0): Promise<WeatherResponse> => {
+    const response = await api.get<WeatherResponse>('/weather', {
+      params: { location, days },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get a budget estimate for a trip
+   * @param location - Destination
+   * @param days - Number of days
+   * @param budgetLevel - 'budget', 'mid', or 'luxury'
+   * @returns Cost breakdown and total
+   */
+  getEstimate: async (
+    location: string, 
+    days: number, 
+    budgetLevel: 'budget' | 'mid' | 'luxury'
+  ): Promise<EstimateResponse> => {
+    const response = await api.post<EstimateResponse>('/estimate', {
+      location,
+      days,
+      budget_level: budgetLevel,
+    });
+    return response.data;
+  },
+
+  /**
+   * Check if the API is reachable
+   */
+  healthCheck: async (): Promise<boolean> => {
+    try {
+      await api.get('/');
+      return true;
+    } catch {
+      return false;
+    }
+  },
 };
 
-// Fetch weather conditions for a specified location and optional date
-// Returns temperature, conditions, humidity, and wind data for trip planning
-export const getWeather = async (location: string, date?: string): Promise<WeatherInfo> => {
-  const params = new URLSearchParams({ location });
-  if (date) params.append('date', date);
-  const response = await apiClient.get(`/weather?${params.toString()}`);
-  return response.data;
-};
-
-// Calculate budget estimate for a trip based on location, duration, and budget tier
-// Returns itemized cost breakdown across accommodation, transport, activities, and fees
-export const getBudgetEstimate = async (data: EstimateRequest): Promise<EstimateResponse> => {
-  const response = await apiClient.post('/estimate', data);
-  return response.data;
-};
-
-// Retrieve predefined suggested prompts to guide user interactions
-// Provides example queries for common safari trip planning scenarios
-// Currently uses static list; can be enhanced to fetch dynamic suggestions from backend
-export const getSuggestedPrompts = async (): Promise<string[]> => {
-  // Return static prompts for now; could be dynamic from backend
-  return [
-    'Plan a 4-day mid-range trip to Amboseli in July',
-    'What is the best time to visit Diani Beach?',
-    'Budget safari for 3 days in Masai Mara',
-    'Weather in Naivasha next weekend',
-    'Luxury resorts in Watamu with prices',
-  ];
-};

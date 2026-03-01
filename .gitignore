@@ -96,3 +96,8 @@ PROJECT_DOCUMENTATION.md
 QUICK_START.md
 README_UPDATED.md
 TECHNICAL_REFERENCE.md
+
+frontend/.env
+frontend/.gitignore
+
+.gitignore
