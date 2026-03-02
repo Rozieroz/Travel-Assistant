@@ -125,3 +125,6 @@ EOF
 backend/data_pipeline/data/chroma_db/*
 !backend/data_pipeline/data/chroma_db/.gitkeep
 !backend/data_pipeline/data/processed/.gitkeep
+
+frontend/.env.production
+frontend/.env.development
