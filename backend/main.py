@@ -25,12 +25,10 @@ from sentence_transformers import SentenceTransformer
 from openai import OpenAI
 
 # -------------------- Load environment --------------------
-# .env is in the project root (one level up from backend/)
-# env_path = Path(__file__).parent.parent / '.env'
 load_dotenv()
 
-GROQ_API_KEY = os.environ["GROQ_API_KEY"]
-OPEN_WEATHER_API_KEY = os.environ["OPEN_WEATHER_API_KEY"]
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+OPEN_WEATHER_API_KEY = os.environ.get("OPEN_WEATHER_API_KEY")
 
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set in .env")
@@ -46,38 +44,39 @@ def format_currency(kes_amount: float) -> str:
     return f"{kes_formatted} (≈ {usd_formatted})"
 
 # -------------------- Global initialisation --------------------
-# These are loaded once when the server starts and reused.
-
-# Groq client
-client = OpenAI(
-    base_url="https://api.groq.com/openai/v1",
-    api_key=GROQ_API_KEY,
-
-    # Set a realistic User-Agent to avoid potential blocking by the API
-    default_headers={
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
+# Embedding model
+embedder = SentenceTransformer(
+    'sentence-transformers/all-MiniLM-L4-v1',
+    device='cpu',  # Ensure CPU usage
+    cache_folder="/data_pipeline/cache",
+    show_progress_bar=False
 )
-MODEL_NAME = "llama-3.3-70b-versatile"  
 
-# Embedding model and Chroma
-embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-chroma_client = chromadb.PersistentClient(path="/data_pipeline/data/chroma_db")
+# Chroma persistent DB (lighter memory footprint)
+chroma_client = chromadb.PersistentClient(
+    path="/data_pipeline/data/chroma_db",
+    settings={"chroma_db_impl": "duckdb+parquet", "persist_directory": "/data_pipeline/data/chroma_db"}
+)
 collection = chroma_client.get_collection("tourism_locations")
 
-# Location data for budget
+# Load location data
 with open("../data_pipeline/data/processed/kenya_tourism.json", "r") as f:
     locations_data = json.load(f)
 location_lookup = {loc["name"].lower(): loc for loc in locations_data}
 
-# In‑memory session store (for demo; use Redis in production)
+# In-memory session store (demo; use Redis in production)
 sessions: Dict[str, List[Dict[str, str]]] = {}
+MAX_HISTORY = 10  # Keep last 10 turns per session
+
+# -------------------- Model info --------------------
+MODEL_NAME = "llama-3.3-70b-versatile"
+client = None  # Groq client will be lazily initialized
 
 # -------------------- Pydantic models --------------------
 class ChatRequest(BaseModel):
     session_id: str
     message: str
-    currency: Optional[str] = "KES"  # Make it optional with default
+    currency: Optional[str] = "KES"
 
 class ChatResponse(BaseModel):
     session_id: str
@@ -94,7 +93,7 @@ class WeatherResponse(BaseModel):
 class EstimateRequest(BaseModel):
     location: str
     days: int
-    budget_level: str = "mid"  # budget, mid, luxury
+    budget_level: str = "mid"
 
 class EstimateResponse(BaseModel):
     location: str
@@ -111,8 +110,17 @@ def retrieve_context(query: str, k: int = 5) -> str:
     return "\n\n".join(docs)
 
 def call_groq(prompt: str) -> str:
-    """Call the chosen model via Groq."""
+    """Call the chosen model via Groq lazily."""
     try:
+        global client
+        if client is None:
+            client = OpenAI(
+                base_url="https://api.groq.com/openai/v1",
+                api_key=GROQ_API_KEY,
+                default_headers={
+                    "User-Agent": "Mozilla/5.0"
+                }
+            )
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
@@ -148,15 +156,11 @@ def get_weather(location: str, days_ahead: int = 0) -> str:
         return f"Error fetching weather: {str(e)}"
 
 def estimate_budget(location_name: str, days: int, budget_level: str = "mid", show_usd: bool = True) -> Optional[str]:
-    """
-    Calculate estimated total cost for a trip.
-    Shows both KES and USD if show_usd is True.
-    """
     loc = location_lookup.get(location_name.lower())
     if not loc:
         return None
 
-    # Get daily cost for the requested level
+    # Accommodation
     daily_cost_str = loc.get("estimated_daily_cost", {}).get(budget_level, "")
     match = re.search(r'(\d+(?:,\d+)?)', daily_cost_str)
     if not match:
@@ -183,7 +187,7 @@ def estimate_budget(location_name: str, days: int, budget_level: str = "mid", sh
             match = re.search(r'(\d+(?:,\d+)?)', cost_str)
             if match:
                 transport_cost = float(match.group(1).replace(',', ''))
-    transport_cost *= 2
+    transport_cost *= 2  # round trip
 
     # Activities
     activities_cost = 0
@@ -196,10 +200,9 @@ def estimate_budget(location_name: str, days: int, budget_level: str = "mid", sh
 
     total = accommodation + entry_cost + transport_cost + activities_cost
 
-    # Format with both currencies
     kes_total = f"KES {total:,.0f}"
     usd_total = f"USD ${total/USD_TO_KES:,.0f}"
-    
+
     breakdown = (
         f"Breakdown for {days} days at {budget_level} level:\n"
         f"- Accommodation & meals: {format_currency(accommodation)}\n"
@@ -222,7 +225,6 @@ def extract_weather_intent(user_input: str) -> tuple:
 # -------------------- FastAPI app --------------------
 app = FastAPI(title="Kenya Travel Assistant API")
 
-# Allow CORS for frontend (adjust origins in production)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -231,11 +233,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_event():
+    print("Kenya Travel Assistant API starting...")
+    print(f"Loaded {len(location_lookup)} tourism locations")
+
 @app.get("/")
 def root():
     return {"message": "Kenya Travel Assistant API is running."}
 
-# backend/main.py - Add this endpoint
 @app.get("/healthz")
 async def health_check():
     return {
@@ -249,24 +255,23 @@ def chat_endpoint(request: ChatRequest):
     """Process a chat message with session memory."""
     session_id = request.session_id
     user_message = request.message
-    # Use attribute access, not .get() - this is the key fix!
-    currency = request.currency  # Changed from request.get("currency", "KES")
+    currency = request.currency  # already optional with default
 
-    # Currency hint based on user preference
+    # Currency hint
     currency_hint = ""
     if currency == "USD":
         currency_hint = "Show all prices in USD. Use approximate conversion (1 USD ≈ 130 KES)."
     elif currency == "BOTH":
         currency_hint = "Show prices in both KES and USD with approximate conversion (1 USD ≈ 130 KES)."
-    else:  # KES default
+    else:
         currency_hint = "Show prices in Kenyan Shillings (KES)."
 
-    # Retrieve or create session history
+    # Retrieve or create session
     if session_id not in sessions:
         sessions[session_id] = []
     history = sessions[session_id]
 
-    # ---- Weather intent (optional, can be handled by RAG as well) ----
+    # Weather info
     weather_info = ""
     loc_weather, _ = extract_weather_intent(user_message)
     if loc_weather:
@@ -274,16 +279,16 @@ def chat_endpoint(request: ChatRequest):
         if weather_info:
             weather_info = f"Weather update: {weather_info}"
 
-    # ---- Retrieve context ----
+    # Retrieve context
     context = retrieve_context(user_message)
 
-    # ---- Format history ----
+    # Format history
     history_str = "\n".join(
         f"User: {turn['user']}\nAssistant: {turn['assistant']}"
         for turn in history
     )
 
-    # ---- Build prompt ----
+    # Build prompt
     prompt = f"""You are a friendly Kenyan travel assistant. Provide practical travel advice.
 Mention budget options when relevant. {currency_hint} 
 Consider weather if mentioned and give recommendations on clothing and gear based on weather predictions.
@@ -309,11 +314,13 @@ Chat history:
 User: {user_message}
 Assistant:"""
 
-    # ---- Get response ----
+    # Get response
     reply = call_groq(prompt)
 
-    # ---- Save to history ----
+    # Save history (limit last 10)
     history.append({"user": user_message, "assistant": reply})
+    if len(history) > MAX_HISTORY:
+        history.pop(0)
 
     return ChatResponse(session_id=session_id, reply=reply)
 
@@ -325,7 +332,6 @@ def weather_endpoint(location: str, days: int = 0):
 
 @app.post("/estimate", response_model=EstimateResponse)
 def estimate_endpoint(request: EstimateRequest):
-    # Get the estimate with both currencies
     estimate = estimate_budget(request.location, request.days, request.budget_level)
     if estimate is None:
         raise HTTPException(status_code=404, detail=f"Location '{request.location}' not found in knowledge base.")
@@ -334,7 +340,7 @@ def estimate_endpoint(request: EstimateRequest):
         location=request.location,
         days=request.days,
         budget_level=request.budget_level,
-        estimate=estimate  # Already includes both currencies
+        estimate=estimate
     )
 
 # Optional: run with uvicorn if executed directly
