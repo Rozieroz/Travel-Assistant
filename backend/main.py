@@ -67,8 +67,12 @@ sessions: Dict[str, List[Dict[str, str]]] = {}
 MAX_HISTORY = 10  # Keep last 10 turns per session
 
 # -------------------- Model info --------------------
-MODEL_NAME = "llama-3.3-70b-versatile"
+# MODEL_NAME = "llama-3.3-70b-versatile"
 client = None  # Groq client will be lazily initialized
+
+# Use a smaller / quantized model- for deployment
+MODEL_NAME = "TheBloke/LLaMA-7B-GGUF-8bit"  
+
 
 # -------------------- Pydantic models --------------------
 class ChatRequest(BaseModel):
