@@ -1,3 +1,14 @@
+"""
+main.py – FastAPI backend for Kenya Travel Assistant.
+
+Endpoints:
+- POST /chat       – Send a message and get a reply (session‑based)
+- GET  /weather    – Get current weather for a location
+- POST /estimate   – Get a budget estimate for a trip
+
+Data is stored in Weaviate, and the assistant uses retrieved context to provide informed answers.
+"""
+
 import datetime
 import os
 import json
@@ -5,24 +16,30 @@ import re
 import requests
 from pathlib import Path
 from typing import Dict, List, Optional
+import atexit
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-import chromadb
-from sentence_transformers import SentenceTransformer
 from openai import OpenAI
+
+# Import Weaviate retriever (remove Chroma/SentenceTransformer imports)
+from weaviate_retriever import WeaviateRetriever
 
 # -------------------- Load environment --------------------
 load_dotenv()
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 OPEN_WEATHER_API_KEY = os.environ.get("OPEN_WEATHER_API_KEY")
+WEAVIATE_URL = os.environ.get("WEAVIATE_URL")
+WEAVIATE_API_KEY = os.environ.get("WEAVIATE_API_KEY")
 
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set in .env")
+if not WEAVIATE_URL or not WEAVIATE_API_KEY:
+    raise RuntimeError("WEAVIATE_URL and WEAVIATE_API_KEY must be set in .env")
 
 # Currency conversion (for budget estimates)
 USD_TO_KES = 130  # Update this exchange rate periodically
@@ -35,15 +52,11 @@ def format_currency(kes_amount: float) -> str:
     return f"{kes_formatted} (≈ {usd_formatted})"
 
 # -------------------- Global initialisation --------------------
-# Chroma persistent DB (lighter memory footprint)
-chroma_client = chromadb.PersistentClient(
-    path="/data_pipeline/data/chroma_db",
-    settings={"chroma_db_impl": "duckdb+parquet", "persist_directory": "/data_pipeline/data/chroma_db"}
-)
-collection = chroma_client.get_collection("tourism_locations")
+# Initialize Weaviate retriever (lightweight, no local models)
+retriever = WeaviateRetriever()
 
-# Load location data
-with open("../data_pipeline/data/processed/kenya_tourism.json", "r") as f:
+# Load location data for budget calculations (still needed locally)
+with open("data_pipeline/data/processed/kenya_tourism.json", "r") as f:
     locations_data = json.load(f)
 location_lookup = {loc["name"].lower(): loc for loc in locations_data}
 
@@ -51,11 +64,9 @@ location_lookup = {loc["name"].lower(): loc for loc in locations_data}
 sessions: Dict[str, List[Dict[str, str]]] = {}
 MAX_HISTORY = 10  # Keep last 10 turns per session
 
-# -------------------- Model info --------------------
-# Use a smaller / quantized model- for deployment
-MODEL_NAME = "TheBloke/LLaMA-7B-GGUF-8bit"  
-client = None  # Groq client will be lazily initialized
-
+# Groq client (lazy initialized)
+client = None
+MODEL_NAME = "llama-3.3-70b-versatile"  # Restore your original model
 
 # -------------------- Pydantic models --------------------
 class ChatRequest(BaseModel):
@@ -88,15 +99,9 @@ class EstimateResponse(BaseModel):
 
 # -------------------- Helper functions --------------------
 def retrieve_context(query: str, k: int = 5) -> str:
-    """Retrieve top k relevant chunks from Chroma."""
-    query_emb = embedder.encode(query,
-                                device='cpu',          # ensure CPU
-                                show_progress_bar=False
-                                ).tolist()
-    
-    results = collection.query(query_embeddings=[query_emb], n_results=k)
-    docs = results['documents'][0] if results['documents'] else []
-    return "\n\n".join(docs)
+    """Retrieve top k relevant locations from Weaviate."""
+    results = retriever.search(query, limit=k)
+    return retriever.format_context(results)
 
 def call_groq(prompt: str) -> str:
     """Call the chosen model via Groq lazily."""
@@ -224,8 +229,14 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
-    print("Kenya Travel Assistant API starting...")
-    print(f"Loaded {len(location_lookup)} tourism locations")
+    print("🦒 Kenya Travel Assistant API starting...")
+    print(f"✅ Loaded {len(location_lookup)} tourism locations")
+    print(f"✅ Weaviate retriever initialized")
+
+@app.on_event("shutdown")
+def shutdown_event():
+    retriever.close()
+    print("👋 Weaviate connection closed")
 
 @app.get("/")
 def root():
@@ -244,7 +255,7 @@ def chat_endpoint(request: ChatRequest):
     """Process a chat message with session memory."""
     session_id = request.session_id
     user_message = request.message
-    currency = request.currency  # already optional with default
+    currency = request.currency
 
     # Currency hint
     currency_hint = ""
@@ -268,7 +279,7 @@ def chat_endpoint(request: ChatRequest):
         if weather_info:
             weather_info = f"Weather update: {weather_info}"
 
-    # Retrieve context
+    # Retrieve context from Weaviate
     context = retrieve_context(user_message)
 
     # Format history
@@ -289,7 +300,7 @@ Suggest transport options and specify from where the journey starts and where to
 If the user is in Nairobi CBD or if they need to get to CBD first unless when using a cab.
 If you don't know from where they need to board a matatu, don't mention it.
 
-Remember sometimes Tourists may not about boarding matatus or locals may not be willing to board matatus.
+Remember sometimes Tourists may not know about boarding matatus or locals may not be willing to board matatus.
 Be concise and helpful.
 
 Relevant context from our knowledge base:
@@ -335,5 +346,5 @@ def estimate_endpoint(request: EstimateRequest):
 # Optional: run with uvicorn if executed directly
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))  # Use Render's PORT or fallback to 8000 locally
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
