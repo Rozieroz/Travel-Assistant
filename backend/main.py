@@ -26,8 +26,8 @@ from openai import OpenAI
 
 # -------------------- Load environment --------------------
 # .env is in the project root (one level up from backend/)
-env_path = Path(__file__).parent.parent / '.env'
-load_dotenv(dotenv_path=env_path)
+# env_path = Path(__file__).parent.parent / '.env'
+load_dotenv()
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 OPEN_WEATHER_API_KEY = os.environ.get("OPEN_WEATHER_API_KEY")
