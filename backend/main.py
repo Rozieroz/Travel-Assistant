@@ -68,11 +68,15 @@ MAX_HISTORY = 10  # Keep last 10 turns per session
 
 # -------------------- Model info --------------------
 # MODEL_NAME = "llama-3.3-70b-versatile"
-client = None  # Groq client will be lazily initialized
+# client = None  # Groq client will be lazily initialized
 
 # Use a smaller / quantized model- for deployment
 MODEL_NAME = "TheBloke/LLaMA-7B-GGUF-8bit"  
+client = None  # Groq client will be lazily initialized
 
+
+# Tokenizer (small, safe in memory)
+# tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 # -------------------- Pydantic models --------------------
 class ChatRequest(BaseModel):
@@ -352,4 +356,5 @@ def estimate_endpoint(request: EstimateRequest):
 # Optional: run with uvicorn if executed directly
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))  # Use Render's PORT or fallback to 8000 locally
+    uvicorn.run(app, host="0.0.0.0", port=port)
