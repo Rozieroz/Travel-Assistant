@@ -28,3 +28,6 @@ frontend/.env
 
 
 frontend/safari-scouts
+
+frontend/.env.development
+frontend/.env.production
