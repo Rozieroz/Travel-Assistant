@@ -47,9 +47,7 @@ def format_currency(kes_amount: float) -> str:
 # Embedding model
 embedder = SentenceTransformer(
     'sentence-transformers/all-MiniLM-L4-v1',
-    device='cpu',  # Ensure CPU usage
     cache_folder="/data_pipeline/cache",
-    show_progress_bar=False
 )
 
 # Chroma persistent DB (lighter memory footprint)
@@ -104,7 +102,11 @@ class EstimateResponse(BaseModel):
 # -------------------- Helper functions --------------------
 def retrieve_context(query: str, k: int = 5) -> str:
     """Retrieve top k relevant chunks from Chroma."""
-    query_emb = embedder.encode(query).tolist()
+    query_emb = embedder.encode(query,
+                                device='cpu',          # ensure CPU
+                                show_progress_bar=False
+                                ).tolist()
+    
     results = collection.query(query_embeddings=[query_emb], n_results=k)
     docs = results['documents'][0] if results['documents'] else []
     return "\n\n".join(docs)
