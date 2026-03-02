@@ -14,8 +14,8 @@ import time
 load_dotenv()
 
 # Configuration - get from .env
-WEAVIATE_URL = os.getenv("WEAVIATE_URL")
-WEAVIATE_API_KEY = os.getenv("WEAVIATE_API_KEY")
+WEAVIATE_URL = os.environ["WEAVIATE_URL"]
+WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 
 print(f"🔌 Connecting to Weaviate at: {WEAVIATE_URL}")
 
