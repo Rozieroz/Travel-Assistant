@@ -29,8 +29,8 @@ from openai import OpenAI
 # env_path = Path(__file__).parent.parent / '.env'
 load_dotenv()
 
-GROQ_API_KEY = os.environ("GROQ_API_KEY")
-OPEN_WEATHER_API_KEY = os.environ("OPEN_WEATHER_API_KEY")
+GROQ_API_KEY = os.environ["GROQ_API_KEY"]
+OPEN_WEATHER_API_KEY = os.environ["OPEN_WEATHER_API_KEY"]
 
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set in .env")
