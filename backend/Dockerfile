@@ -23,7 +23,8 @@ RUN pip install --no-cache-dir \
     fastapi==0.104.1 \
     uvicorn[standard]==0.24.0 \
     python-dotenv==1.0.0 \
-    openai==1.3.0 \
+    openai==1.30.1 \
+    httpx==0.27.0 \
     requests==2.31.0
 
 # Copy the rest of the application
