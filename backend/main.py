@@ -1,12 +1,3 @@
-"""
-main.py – FastAPI backend for Kenya Travel Assistant.
-
-Endpoints:
-- POST /chat       – Send a message and get a reply (session‑based)
-- GET  /weather    – Get current weather for a location
-- POST /estimate   – Get a budget estimate for a trip
-"""
-
 import datetime
 import os
 import json
@@ -44,12 +35,6 @@ def format_currency(kes_amount: float) -> str:
     return f"{kes_formatted} (≈ {usd_formatted})"
 
 # -------------------- Global initialisation --------------------
-# Embedding model
-embedder = SentenceTransformer(
-    'sentence-transformers/all-MiniLM-L6-v2',
-    cache_folder="/data_pipeline/cache",
-)
-
 # Chroma persistent DB (lighter memory footprint)
 chroma_client = chromadb.PersistentClient(
     path="/data_pipeline/data/chroma_db",
@@ -67,16 +52,10 @@ sessions: Dict[str, List[Dict[str, str]]] = {}
 MAX_HISTORY = 10  # Keep last 10 turns per session
 
 # -------------------- Model info --------------------
-# MODEL_NAME = "llama-3.3-70b-versatile"
-# client = None  # Groq client will be lazily initialized
-
 # Use a smaller / quantized model- for deployment
 MODEL_NAME = "TheBloke/LLaMA-7B-GGUF-8bit"  
 client = None  # Groq client will be lazily initialized
 
-
-# Tokenizer (small, safe in memory)
-# tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 # -------------------- Pydantic models --------------------
 class ChatRequest(BaseModel):
