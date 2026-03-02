@@ -1,12 +1,8 @@
-# backend/Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Create cache folder for embeddings
-RUN mkdir -p /data_pipeline/cache
-
-# Install system dependencies needed for sentence-transformers and ChromaDB
+# Install system dependencies (if any needed)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -16,19 +12,8 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first (for better caching)
 COPY requirements.txt .
 
-# Install pinned dependencies that work together
-RUN pip install --no-cache-dir \
-    numpy==1.24.3 \
-    pandas==1.5.3 \
-    chromadb==0.4.22 \
-    sentence-transformers==2.2.2 \
-    huggingface-hub==0.19.4 \
-    fastapi==0.104.1 \
-    uvicorn[standard]==0.24.0 \
-    python-dotenv==1.0.0 \
-    openai==1.30.1 \
-    httpx==0.27.0 \
-    requests==2.31.0
+# Install all dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
 COPY . .
