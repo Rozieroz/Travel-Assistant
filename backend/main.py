@@ -46,7 +46,7 @@ def format_currency(kes_amount: float) -> str:
 # -------------------- Global initialisation --------------------
 # Embedding model
 embedder = SentenceTransformer(
-    'sentence-transformers/all-MiniLM-L4-v1',
+    'sentence-transformers/all-MiniLM-L6-v2',
     cache_folder="/data_pipeline/cache",
 )
 
