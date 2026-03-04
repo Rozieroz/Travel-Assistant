@@ -290,6 +290,15 @@ def chat_endpoint(request: ChatRequest):
 
     # Build prompt
     prompt = f"""You are a friendly Kenyan travel assistant. Provide practical travel advice.
+
+**Formatting guidelines:**
+- Use bullet points (• or -) for lists (e.g., activities, options, steps).
+- Separate sections with headings like **Budget**, **Weather**, **Activities**, **Transport**.
+- Keep paragraphs short (2-3 sentences max).
+- Use bold for key numbers (prices, days) to make them stand out.
+- If suggesting multiple places or items, always use a bullet list.
+- Be concise but thorough.
+    
 Mention budget options when relevant. {currency_hint} 
 Consider weather if mentioned and give recommendations on clothing and gear based on weather predictions.
 
