@@ -35,6 +35,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
               lineHeight: 1.6,
               fontWeight: 400,
               boxShadow: '0 4px 20px rgba(249,115,22,0.35)',
+              whiteSpace: 'pre-wrap',  // ← preserves newlines and bullet formatting
             }}
           >
             {message.content}
@@ -89,6 +90,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             fontSize: 15,
             lineHeight: 1.7,
             boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+            whiteSpace: 'pre-wrap',  // ← preserves newlines and bullet formatting
           }}
         >
           {message.content}

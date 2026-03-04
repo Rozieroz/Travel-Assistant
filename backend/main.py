@@ -24,6 +24,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from openai import OpenAI
+import re
 
 # Import Weaviate retriever (remove Chroma/SentenceTransformer imports)
 from weaviate_retriever import WeaviateRetriever
@@ -103,6 +104,21 @@ def retrieve_context(query: str, k: int = 5) -> str:
     results = retriever.search(query, limit=k)
     return retriever.format_context(results)
 
+import re
+
+def preprocess_response(text: str) -> str:
+    """
+    Insert line breaks before headings and bullet points if they are run together.
+    This ensures that each section and bullet starts on a new line.
+    """
+    # Ensure headings (e.g., **Weather:**) are on their own line
+    text = re.sub(r'(\*\*.*?:\*\*)\s*', r'\n\1\n', text)
+    # Ensure bullet points (•, -, *) are on their own line
+    text = re.sub(r'(?<!\n)([•\-*])\s+', r'\n\1 ', text)
+    # Remove excessive blank lines (more than two)
+    text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
+    return text.strip()
+
 def call_groq(prompt: str) -> str:
     """Call the chosen model via Groq lazily."""
     try:
@@ -128,6 +144,55 @@ def call_groq(prompt: str) -> str:
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error calling Groq API: {str(e)}"
+
+def format_response(text: str) -> str:
+    """
+    Post‑process the LLM response to ensure clean formatting:
+    - Blank line before each section heading (e.g., **Weather:**)
+    - Bullet points each on a new line
+    - No run‑on bullet lists
+    """
+    lines = text.split('\n')
+    formatted = []
+    in_bullet_section = False
+
+    for line in lines:
+        stripped = line.strip()
+        # Detect section headings (e.g., **Weather:**)
+        if stripped.startswith('**') and stripped.endswith(':**'):
+            # Add a blank line before heading (if not first line)
+            if formatted and formatted[-1] != '':
+                formatted.append('')
+            formatted.append(stripped)
+            in_bullet_section = False
+        # Bullet points
+        elif stripped.startswith(('•', '-', '*')) and len(stripped) > 1:
+            # Ensure there's a blank line before the first bullet of a section
+            if not in_bullet_section and formatted and formatted[-1] != '':
+                formatted.append('')
+            formatted.append(stripped)
+            in_bullet_section = True
+        # Empty lines – keep as‑is
+        elif stripped == '':
+            formatted.append('')
+            in_bullet_section = False
+        # Regular text – add normally
+        else:
+            formatted.append(stripped)
+            in_bullet_section = False
+
+    # Join lines, removing multiple consecutive blank lines
+    final_lines = []
+    prev_blank = False
+    for line in formatted:
+        if line == '':
+            if not prev_blank:
+                final_lines.append('')
+                prev_blank = True
+        else:
+            final_lines.append(line)
+            prev_blank = False
+    return '\n'.join(final_lines)
 
 def get_weather(location: str, days_ahead: int = 0) -> str:
     """Fetch current weather (or forecast) for a location."""
@@ -289,16 +354,10 @@ def chat_endpoint(request: ChatRequest):
     )
 
     # Build prompt
-    prompt = f"""You are a friendly Kenyan travel assistant. Provide practical travel advice.
+    prompt = f"""You are a friendly Kenyan travel assistant.  Provide practical travel advice in a clear, structured format.
 
-**Formatting guidelines:**
-- Use bullet points (• or -) for lists (e.g., activities, options, steps).
-- Separate sections with headings like **Budget**, **Weather**, **Activities**, **Transport**.
-- Keep paragraphs short (2-3 sentences max).
-- Use bold for key numbers (prices, days) to make them stand out.
-- If suggesting multiple places or items, always use a bullet list.
-- Be concise but thorough.
-    
+
+
 Mention budget options when relevant. {currency_hint} 
 Consider weather if mentioned and give recommendations on clothing and gear based on weather predictions.
 
@@ -334,6 +393,12 @@ Assistant:"""
 
     # Get response
     reply = call_groq(prompt)
+
+    # Pre‑process formatting (handle run‑on sections and bullets)
+    reply = preprocess_response(reply)
+
+    # Post‑process formatting
+    reply = format_response(reply)
 
     # Save history (limit last 10)
     history.append({"user": user_message, "assistant": reply})

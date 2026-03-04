@@ -17,7 +17,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const WELCOME_MESSAGES: Record<Mode, string> = {
   adventure: "Habari! 🦒 Ready to explore Kenya? Ask me about safaris, beaches, hiking trails, budgets, or anything else for an incredible adventure!",
-  everyday: "Sawa sawa! ☕ Looking for your next favourite spot? Ask me about restaurants, parks, weekend hangouts, date nights, or fun things to do today!",
+  everyday: "Karibu ☕ Looking for your next favourite spot? Ask me about restaurants, parks, weekend hangouts, date nights, or fun things to do today!",
 };
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
@@ -90,8 +90,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     console.log('Sending message:', content);
     console.log('Backend URL:', API_URL);
-    console.log('🔌 Backend available:', isBackendAvailable);
-    console.log('💱 Current currency:', currency);
+    console.log('Backend available:', isBackendAvailable);
+    console.log('Current currency:', currency);
 
     const userMessage: Message = {
       id: uuidv4(),

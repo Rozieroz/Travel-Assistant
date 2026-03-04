@@ -36,7 +36,7 @@ CATEGORY_TO_PARKS = {
         # etc.
     ],
     "nairobi package": [
-        "nairobi national park"  # but this is a package including orphanage, so maybe we treat separately
+        "nairobi national park"  # but this is a package including orphanage, so maybe treat separately
     ],
     # Add more as needed
 }
