@@ -142,8 +142,23 @@ def call_groq(prompt: str) -> str:
             top_p=0.9
         )
         return response.choices[0].message.content.strip()
+    
+    # handle Groq API errors, especially rate limits
     except Exception as e:
-        return f"Error calling Groq API: {str(e)}"
+        error_str = str(e)
+        # Check for rate limit (429)
+        if "429" in error_str or "rate_limit_exceeded" in error_str:
+            # Try to extract wait time from error message
+            match = re.search(r"try again in (\d+)m(\d+\.?\d*)s", error_str)
+            if match:
+                minutes = match.group(1)
+                seconds = match.group(2)
+                wait_time = f"{minutes} minutes and {seconds} seconds"
+            else:
+                wait_time = "a few minutes"
+            return f"⚠️ I've reached my daily usage limit. Please try again in about {wait_time}. (Groq API rate limit)"
+        else:
+            return f"Error calling Groq API: {error_str}"
 
 def format_response(text: str) -> str:
     """
